@@ -56,11 +56,13 @@ function createNode(nodeDict::Dict{String, Node}, file::String)
             
         end
 
-        # Sets the alternative name such as "Dusable" -> "Statistics Department"
+        # Sets the alternative name, such as "Dusable" -> "Statistics Department"
         if(occursin("alt_name", word))
             findQuotes = findall("\"", word)
             altName = word[findQuotes[3].start+1:findQuotes[4].start-1]
-            nodeDict[nodeId].altName = altName
+            if(haskey(nodeDict, nodeId))
+                nodeDict[nodeId].altName = altName
+            end
         end 
 
         if(occursin("description", word))
@@ -72,9 +74,16 @@ function createNode(nodeDict::Dict{String, Node}, file::String)
         if(occursin("<tag k=\"name\"",word))
             findQuotes = findall("\"", word)
             name = word[findQuotes[3].start+1:findQuotes[4].start-1]
-            nodeDict[nodeId].name = name
-            nodeDict[name] = nodeDict[nodeId]
-            #nodeDict[nodeId] = Node()
+            
+            # Creating a new entry but with the node name as as a key.
+            if(haskey(nodeDict, nodeId))
+
+                nodeDict[nodeId].name = name
+                nodeDict[name] = nodeDict[nodeId]
+                # Removing the old entry with the nodeid as the key. 
+                println("Deleting ", nodeId)
+                delete!(nodeDict, nodeId)
+            end
         end
     end
     return nodeDict

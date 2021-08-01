@@ -42,58 +42,28 @@ nodeDict = Dict("1" => Node())
 # Calling function that will return a Dict of Node objects
 createNode(nodeDict, niuPath)
 
-# nodeId = ""
-# for word in eachline("niuMap.osm")
-    
-#     # Check for <node> element. 
-#     if(occursin("<node id", word))
-#         # Makes an array of the indeces which are quotes in the variable word
-#         findQuotes = findall("\"", word)
 
-#         firstDigit = findfirst(r"[0-9]", word)
-#         endQuote = findall("\"", word)
+function menu()
 
-#         nodeId = word[findQuotes[1].start+1:findQuotes[2].start-1]
-        
-#         latStart = findfirst("lat", word)
-#         nodeLat = word[latStart.start+5:latStart.start+14]
-        
-#         # Add 1 to account for the negative sign
-#         lonStart = findfirst("lon", word)
-#         nodeLon = word[lonStart.start+7:lonStart.start+15]
+    println("Select an option")
+    println("1) Shortest Path")
+    println("2) Agent Simulation\n")
+    userInput = readline()
 
-#         nodeDict[nodeId] = Node(nodeLat, nodeLon, "N/A", "N/A", "N/A")
-#     end
-
-#     if(occursin("<nd ref", word))
-#         findQuotes = findall("\"", word)
-#         # Remember previous word
-#         firstDigit = findfirst(r"[0-9]", word)
-#         endQuote = findall("\"", word)
-
-#         nodeId = word[findQuotes[1].start+1:findQuotes[2].start-1]
-        
-#     end
-
-#     # Sets the alternative name such as "Dusable" -> "Statistics Department"
-#     if(occursin("alt_name", word))
-#         findQuotes = findall("\"", word)
-#         altName = word[findQuotes[3].start+1:findQuotes[4].start-1]
-#         nodeDict[nodeId].altName = altName
-#     end 
-
-#     if(occursin("description", word))
-#         findQuotes = findall("\"", word)
-#         description = word[findQuotes[3].start+1:findQuotes[4].start-1]
-#         nodeDict[nodeId].description = description
-#     end 
-#     #println(word)
-#     if(occursin("<tag k=\"name\"",word))
-#         findQuotes = findall("\"", word)
-#         name = word[findQuotes[3].start+1:findQuotes[4].start-1]
-#         nodeDict[nodeId].name = name
-#         nodeDict[name] = nodeDict[nodeId]
-#         #nodeDict[nodeId] = Node()
-#     end
-# end
-
+    if(userInput == "1")
+        println("1) Random location")
+        println("2) Pick locations")
+        userInput = readline()
+        if(userInput == "1")
+            # Random Simulation
+        else
+            print("Starting location name: ")
+            startingLocation = readline()
+            print("Ending location name: ")
+            endingLocation = readline()
+            # Call function
+        end
+    elseif(userInput == "2")
+        println("Agent simulation")
+    end
+end
