@@ -39,9 +39,11 @@ nearest_node(niuRoadNetwork, csBuildingENU)
 # Julia interpretes keys and values by looking at the call. 
 nodeDict = Dict("1" => Node())
 
-# Calling function that will return a Dict of Node objects
-createNode(nodeDict, niuPath)
+buildingDict = Dict("1" => Building())
 
+# Calling function that will return a Dict of Node objects
+createNodeDict(nodeDict, niuPath)
+createBuildingDict(buildingDict, nodeDict, niuPath)
 
 function menu()
 
