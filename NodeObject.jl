@@ -61,6 +61,12 @@ function createBuildingDict(buildingDict::Dict{String, Building}, nodeDict::Dict
     building = false
     lat = ""
     lon = ""
+    altName = ""
+    latSum = 0
+    lonSum = 0
+    nodeCounter = 0
+    buildingBool = false
+    buildingName = ""
     
     #for word in eachline("niuMap.osm")
     for word in eachline(file)
@@ -86,17 +92,24 @@ function createBuildingDict(buildingDict::Dict{String, Building}, nodeDict::Dict
             #nodeDict[nodeId] = Node(lat, nodeLon, "N/A", "N/A", "N/A")
         end
         
+        # Sets building flag to on. This advises that we should keep the current node 
         if(firstCaseFlag && occursin("<tag k=\"building\"", word))
             building = true 
         end
         
+        if(occursin("<tag k=\"alt_name\"", word))
+            findQuotes = findall("\"", word)
+            altName = word[findQuotes[3].start+1:findQuotes[4].start-1]
+        end
+
+        # Get the name and uses it as a key for the lat and long of the building. 
         if(occursin("<tag k=\"name\"", word) && firstCaseFlag && building)
             findQuotes = findall("\"", word)
 
             buildingName = word[findQuotes[3].start+1:findQuotes[4].start-1]
             println(buildingName)
             
-            buildingDict[buildingName] = Building(lat, lon, "N/A", "N/A", "N/A")
+            buildingDict[buildingName] = Building(lat, lon, "N/A", altName, "N/A")
 
             firstCaseFlag = false
             building = false
@@ -105,45 +118,78 @@ function createBuildingDict(buildingDict::Dict{String, Building}, nodeDict::Dict
         end
 
         # Second case
-        if(occursin("<nd ref", word))
-            findQuotes = findall("\"", word)
-            # Remember previous word
-            firstDigit = findfirst(r"[0-9]", word)
-            endQuote = findall("\"", word)
+        if(occursin("<way id", word))
+            secondCaseFlag = true
+            # findQuotes = findall("\"", word)
+            # # Remember previous word
+            # firstDigit = findfirst(r"[0-9]", word)
+            # endQuote = findall("\"", word)
 
-            nodeId = word[findQuotes[1].start+1:findQuotes[2].start-1]
-            
+            # nodeId = word[findQuotes[1].start+1:findQuotes[2].start-1]   
         end
 
-        # Sets the alternative name, such as "Dusable" -> "Statistics Department"
-        if(occursin("alt_name", word))
+        if(occursin("<nd ref", word) && secondCaseFlag)
             findQuotes = findall("\"", word)
-            altName = word[findQuotes[3].start+1:findQuotes[4].start-1]
-            if(haskey(nodeDict, nodeId))
-                #nodeDict[nodeId].altName = altName
-            end
-        end 
-
-        if(occursin("description", word))
-            findQuotes = findall("\"", word)
-            description = word[findQuotes[3].start+1:findQuotes[4].start-1]
-            #nodeDict[nodeId].description = description
-        end 
-
-        if(occursin("<tag k=\"name\"",word))
-            findQuotes = findall("\"", word)
-            name = word[findQuotes[3].start+1:findQuotes[4].start-1]
-            
-            # Creating a new entry but with the node name as as a key.
-            if(haskey(nodeDict, nodeId))
-
-                #nodeDict[nodeId].name = name
-                #nodeDict[name] = nodeDict[nodeId]
-                # Removing the old entry with the nodeid as the key. 
-                #println("Deleting ", nodeId)
-                #delete!(nodeDict, nodeId)
-            end
+            secondCaseNodeId = word[findQuotes[1].start+1:findQuotes[2].start-1]
+            # Get lat, lon of current node
+            latSum += parse(Float64, nodeDict[secondCaseNodeId].lat)
+            lonSum += parse(Float64, nodeDict[secondCaseNodeId].lon)
+            nodeCounter = nodeCounter + 1
+            # Add to latSum and lonSum
         end
+
+        if(occursin("<tag k=\"building\"", word))
+            buildingBool = true 
+        end
+
+        if(occursin("<tag k=\"name\"", word) && buildingBool)
+            findQuotes = findall("\"", word)
+            buildingName = word[findQuotes[3].start+1:findQuotes[4].start-1]
+        end
+
+        # Reset variables
+        if(occursin("</way>", word))
+            if(buildingBool)
+                buildingDict[buildingName] = Building(string(latSum/nodeCounter), string(lonSum/nodeCounter), " ", " ", " ")
+            end
+            
+           buildingBool = false 
+            secondCaseFlag = false
+            latSum = 0
+            lonSum = 0
+            nodeCounter = 0
+        end
+
+
+        # # Sets the alternative name, such as "Dusable" -> "Statistics Department"
+        # if(occursin("alt_name", word))
+        #     findQuotes = findall("\"", word)
+        #     altName = word[findQuotes[3].start+1:findQuotes[4].start-1]
+        #     if(haskey(nodeDict, nodeId))
+        #         #nodeDict[nodeId].altName = altName
+        #     end
+        # end 
+
+        # if(occursin("description", word))
+        #     findQuotes = findall("\"", word)
+        #     description = word[findQuotes[3].start+1:findQuotes[4].start-1]
+        #     #nodeDict[nodeId].description = description
+        # end 
+
+        # if(occursin("<tag k=\"name\"",word))
+        #     findQuotes = findall("\"", word)
+        #     name = word[findQuotes[3].start+1:findQuotes[4].start-1]
+            
+        #     # Creating a new entry but with the node name as as a key.
+        #     if(haskey(nodeDict, nodeId))
+
+        #         #nodeDict[nodeId].name = name
+        #         #nodeDict[name] = nodeDict[nodeId]
+        #         # Removing the old entry with the nodeid as the key. 
+        #         #println("Deleting ", nodeId)
+        #         #delete!(nodeDict, nodeId)
+        #     end
+        # end
     end
     return buildingDict
 end
