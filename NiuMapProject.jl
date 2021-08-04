@@ -22,8 +22,8 @@ p = OpenStreetMapXPlot.plotmap(niuRoadNetwork, width=1000, height=800, km=true)
 csBuildingLLA = LLA(41.9435221, -88.7720755)
 
 """
-Converts an LLA cordinate to an ENU. Does this by firstly converting to 
-an ECEF cordinate and then convertin to an ENU cordinate with the use of. 
+Converts an LLA cordinate to an ENU. Does this by converting an LLA cordinate to 
+an ECEF cordinate and then converting to an ENU cordinate with the use of. 
 
 niuRoadNetwork.bounds gives the bounds of the map in LLA cordinates.
 """
@@ -35,18 +35,10 @@ end
 csBuildingENU = convertLLAtoENU(csBuildingLLA)    
 nearest_node(niuRoadNetwork, csBuildingENU)
 
-# Create a Dictionary that will map a node to a Node with meta data about it
-# Julia interpretes keys and values by looking at the call. 
-nodeDict = Dict("1" => Node())
-
-buildingDict = Dict("1" => Building())
-
-# Calling function that will return a Dict of Node objects
-createNodeDict(nodeDict, niuPath)
-createBuildingDict(buildingDict, nodeDict, niuPath)
-
+"""
+Menu function 
+"""
 function menu()
-
     println("Select an option")
     println("1) Shortest Path")
     println("2) Agent Simulation\n")
@@ -69,3 +61,19 @@ function menu()
         println("Agent simulation")
     end
 end
+
+
+
+
+
+# Create a Dictionary that will map a node to a Node with meta data about it
+# Julia interpretes keys and values by looking at the call. 
+nodeDict = Dict("1" => Node())
+
+buildingDict = Dict("1" => Building())
+
+# Calling function that will return a Dict of Node objects
+createNodeDict(nodeDict, niuPath)
+createBuildingDict(buildingDict, nodeDict, niuPath)
+
+menu()

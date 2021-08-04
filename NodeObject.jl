@@ -4,12 +4,11 @@ Contain buildings with their corresponding lon lat and name.
 mutable struct Building
     lat::String
     lon::String
-    name::String
     altName::String
     description::String
 end
 
-Building() = Building("N/A", "N/A", "N/A", "N/A", "N/A")
+Building() = Building("N/A", "N/A", "N/A", "N/A")
 
 """
 Issue I have is that the package I'm using does not parse the buildings nodes. Thus, they are missing. 
@@ -59,7 +58,7 @@ function createBuildingDict(buildingDict::Dict{String, Building}, nodeDict::Dict
     firstCaseFlag = false
     secondCaseFlag = false
     building = false
-    lat = ""
+    lat = "" 
     lon = ""
     altName = ""
     latSum = 0
@@ -67,7 +66,9 @@ function createBuildingDict(buildingDict::Dict{String, Building}, nodeDict::Dict
     nodeCounter = 0
     buildingBool = false
     buildingName = ""
-    
+    altName = "N/A"
+    description = "N/A"
+
     #for word in eachline("niuMap.osm")
     for word in eachline(file)
         # First case
@@ -97,6 +98,7 @@ function createBuildingDict(buildingDict::Dict{String, Building}, nodeDict::Dict
             building = true 
         end
         
+        # Get alt name
         if(occursin("<tag k=\"alt_name\"", word))
             findQuotes = findall("\"", word)
             altName = word[findQuotes[3].start+1:findQuotes[4].start-1]
@@ -105,43 +107,53 @@ function createBuildingDict(buildingDict::Dict{String, Building}, nodeDict::Dict
         # Get the name and uses it as a key for the lat and long of the building. 
         if(occursin("<tag k=\"name\"", word) && firstCaseFlag && building)
             findQuotes = findall("\"", word)
-
             buildingName = word[findQuotes[3].start+1:findQuotes[4].start-1]
-            println(buildingName)
-            
-            buildingDict[buildingName] = Building(lat, lon, "N/A", altName, "N/A")
+            buildingDict[buildingName] = Building(lat, lon, altName, description)
 
+            # Reseting variables for next run 
             firstCaseFlag = false
             building = false
             lat = ""
             lon = ""
+            altName = "N/A"
+            description = "N/A"
         end
 
-        # Second case
+        # Second case.
+        # Way element signifies a way (ordered list of nodes)
         if(occursin("<way id", word))
             secondCaseFlag = true
-            # findQuotes = findall("\"", word)
-            # # Remember previous word
-            # firstDigit = findfirst(r"[0-9]", word)
-            # endQuote = findall("\"", word)
-
-            # nodeId = word[findQuotes[1].start+1:findQuotes[2].start-1]   
         end
 
+        # Get current nodeId
         if(occursin("<nd ref", word) && secondCaseFlag)
             findQuotes = findall("\"", word)
             secondCaseNodeId = word[findQuotes[1].start+1:findQuotes[2].start-1]
-            # Get lat, lon of current node
+            
+            # Add lat and lon of current node 
             latSum += parse(Float64, nodeDict[secondCaseNodeId].lat)
             lonSum += parse(Float64, nodeDict[secondCaseNodeId].lon)
             nodeCounter = nodeCounter + 1
-            # Add to latSum and lonSum
         end
 
+        # Get alt name
+        if(occursin("<tag k=\"alt_name\"", word))
+            findQuotes = findall("\"", word)
+            altName = word[findQuotes[3].start+1:findQuotes[4].start-1]
+        end
+
+        # Determine if way is describing a building 
         if(occursin("<tag k=\"building\"", word))
             buildingBool = true 
         end
 
+        # Get description name
+        if(occursin("<tag k=\"description\"", word))
+            findQuotes = findall("\"", word)
+            description = word[findQuotes[3].start+1:findQuotes[4].start-1]
+        end
+
+        # Get name of building
         if(occursin("<tag k=\"name\"", word) && buildingBool)
             findQuotes = findall("\"", word)
             buildingName = word[findQuotes[3].start+1:findQuotes[4].start-1]
@@ -150,46 +162,17 @@ function createBuildingDict(buildingDict::Dict{String, Building}, nodeDict::Dict
         # Reset variables
         if(occursin("</way>", word))
             if(buildingBool)
-                buildingDict[buildingName] = Building(string(latSum/nodeCounter), string(lonSum/nodeCounter), " ", " ", " ")
+                buildingDict[buildingName] = Building(string(latSum/nodeCounter), string(lonSum/nodeCounter), altName, description)
             end
             
-           buildingBool = false 
+            buildingBool = false 
             secondCaseFlag = false
             latSum = 0
             lonSum = 0
             nodeCounter = 0
+            altName = "N/A"
+            description = "N/A"
         end
-
-
-        # # Sets the alternative name, such as "Dusable" -> "Statistics Department"
-        # if(occursin("alt_name", word))
-        #     findQuotes = findall("\"", word)
-        #     altName = word[findQuotes[3].start+1:findQuotes[4].start-1]
-        #     if(haskey(nodeDict, nodeId))
-        #         #nodeDict[nodeId].altName = altName
-        #     end
-        # end 
-
-        # if(occursin("description", word))
-        #     findQuotes = findall("\"", word)
-        #     description = word[findQuotes[3].start+1:findQuotes[4].start-1]
-        #     #nodeDict[nodeId].description = description
-        # end 
-
-        # if(occursin("<tag k=\"name\"",word))
-        #     findQuotes = findall("\"", word)
-        #     name = word[findQuotes[3].start+1:findQuotes[4].start-1]
-            
-        #     # Creating a new entry but with the node name as as a key.
-        #     if(haskey(nodeDict, nodeId))
-
-        #         #nodeDict[nodeId].name = name
-        #         #nodeDict[name] = nodeDict[nodeId]
-        #         # Removing the old entry with the nodeid as the key. 
-        #         #println("Deleting ", nodeId)
-        #         #delete!(nodeDict, nodeId)
-        #     end
-        # end
     end
     return buildingDict
 end
