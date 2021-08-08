@@ -10,6 +10,7 @@ using OpenStreetMapXPlot
 using OpenStreetMapX
 using Plots
 include("NodeObject.jl")
+include("Menu.jl")
 
 # Path to the .osm file
 niuPath = "C:\\Users\\bobgo\\Desktop\\Development\\Julia\\NIU Map\\niuMap.osm"
@@ -35,37 +36,6 @@ end
 csBuildingENU = convertLLAtoENU(csBuildingLLA)    
 nearest_node(niuRoadNetwork, csBuildingENU)
 
-"""
-Menu function 
-"""
-function menu()
-    println("Select an option")
-    println("1) Shortest Path")
-    println("2) Agent Simulation\n")
-    userInput = readline()
-
-    if(userInput == "1")
-        println("1) Random location")
-        println("2) Pick locations")
-        userInput = readline()
-        if(userInput == "1")
-            # Random Simulation
-        else
-            print("Starting location name: ")
-            startingLocation = readline()
-            print("Ending location name: ")
-            endingLocation = readline()
-            # Call function
-        end
-    elseif(userInput == "2")
-        println("Agent simulation")
-    end
-end
-
-
-
-
-
 # Create a Dictionary that will map a node to a Node with meta data about it
 # Julia interpretes keys and values by looking at the call. 
 nodeDict = Dict("1" => Node())
@@ -76,4 +46,29 @@ buildingDict = Dict("1" => Building())
 createNodeDict(nodeDict, niuPath)
 createBuildingDict(buildingDict, nodeDict, niuPath)
 
-menu()
+menu(buildingDict)
+
+
+# function suggestor(location::String)
+#     println("The location ", location, " does not exist")
+# end
+
+# user = ""
+
+
+# println("Enter a number 1 or 2")
+# user = readline()
+# while(user != "1" && user  != "2" )
+#     println("Enter a number 1 or 2")
+#     global user = readline()
+# end
+# user = "East Heating Plant"
+
+# try
+#     buildingDict[user]    
+# catch e
+#     suggestor(user)
+# end
+
+
+# println("fdsafdsafds")
