@@ -42,7 +42,7 @@ function createNodeDict(nodeDict::Dict{String, Node}, file::String)
             # Add 1 to account for the negative sign
             lonStart = findfirst("lon", word)
             nodeLon = word[lonStart.start+5:lonStart.start+15]
-
+            
             nodeDict[nodeId] = Node(nodeLat, nodeLon)
         end
     end

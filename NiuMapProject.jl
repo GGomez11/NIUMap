@@ -48,27 +48,5 @@ createBuildingDict(buildingDict, nodeDict, niuPath)
 
 menu(buildingDict)
 
+#location = "Fdsafdsafds"
 
-# function suggestor(location::String)
-#     println("The location ", location, " does not exist")
-# end
-
-# user = ""
-
-
-# println("Enter a number 1 or 2")
-# user = readline()
-# while(user != "1" && user  != "2" )
-#     println("Enter a number 1 or 2")
-#     global user = readline()
-# end
-# user = "East Heating Plant"
-
-# try
-#     buildingDict[user]    
-# catch e
-#     suggestor(user)
-# end
-
-
-# println("fdsafdsafds")
