@@ -37,8 +37,8 @@ buildingDict = Dict("1" => Building())
 createNodeDict(nodeDict, niuPath)
 createBuildingDict(buildingDict, nodeDict, niuPath)
 
-Tuplee = menu(buildingDict)
+menu(buildingDict)
 
 
 #location = "Fdsafdsafds"
-println(Tuplee)
+

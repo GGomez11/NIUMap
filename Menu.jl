@@ -31,7 +31,16 @@ function suggestor(location::String, buildingDict::Dict{String, Building})
     return userInput 
 end
 
-function agentSimulation(enuTuple)
+function shortestPath(startENU, endENU)
+    # Path to the .osm file
+    niuPath = "C:\\Users\\bobgo\\Desktop\\Development\\Julia\\NIU Map\\niuMap.osm"
+
+    # Parses the osm file and creates the road network based on the map data. 
+    niuRoadNetwork = OpenStreetMapX.get_map_data(niuPath, only_intersections=false, use_cache=false)
+
+    p = OpenStreetMapXPlot.plotmap(niuRoadNetwork, width=1000, height=800, km=true)
+
+    p
 end
 
 """
@@ -73,7 +82,7 @@ function menu(buildingDict::Dict{String, Building})
 
     # Shortest path simulation
     if(userInput == "1")
-        println("1) Random location")
+        println("1) Random locations")
         println("2) Pick locations")
         userInput = readline()
         
@@ -95,8 +104,7 @@ function menu(buildingDict::Dict{String, Building})
 
             enuTuple = convertLLAtoENU(startLLA, endLLA)
 
-            shortestPath(enuTuple[1], enuTuple[2])
-            return enuTuble 
+            shortestPath(enuTuple[1], enuTuple[2]) 
         else
             startingLocation = ""
             endingLocation = ""
@@ -141,8 +149,6 @@ function menu(buildingDict::Dict{String, Building})
             enuTuple = convertLLAtoENU(startLLA, endLLA)
 
             shortestPath(enuTuple[1], enuTuple[2])
-            
-            
         end
     elseif(userInput == "2")
         println("Agent simulation")
