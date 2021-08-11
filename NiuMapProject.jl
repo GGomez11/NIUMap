@@ -22,19 +22,10 @@ p = OpenStreetMapXPlot.plotmap(niuRoadNetwork, width=1000, height=800, km=true)
 
 csBuildingLLA = LLA(41.9435221, -88.7720755)
 
-"""
-Converts an LLA cordinate to an ENU. Does this by converting an LLA cordinate to 
-an ECEF cordinate and then converting to an ENU cordinate with the use of. 
 
-niuRoadNetwork.bounds gives the bounds of the map in LLA cordinates.
-"""
-function convertLLAtoENU(lla::LLA)::ENU
-    ecef = ECEF(lla)
-    enu = ENU(ecef, OpenStreetMapX.center(niuRoadNetwork.bounds))
-    return enu
-end
-csBuildingENU = convertLLAtoENU(csBuildingLLA)    
-nearest_node(niuRoadNetwork, csBuildingENU)
+
+#csBuildingENU = convertLLAtoENU(csBuildingLLA)    
+#nearest_node(niuRoadNetwork, csBuildingENU)
 
 # Create a Dictionary that will map a node to a Node with meta data about it
 # Julia interpretes keys and values by looking at the call. 
@@ -46,7 +37,8 @@ buildingDict = Dict("1" => Building())
 createNodeDict(nodeDict, niuPath)
 createBuildingDict(buildingDict, nodeDict, niuPath)
 
-menu(buildingDict)
+Tuplee = menu(buildingDict)
+
 
 #location = "Fdsafdsafds"
-
+println(Tuplee)
