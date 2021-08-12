@@ -31,16 +31,22 @@ function suggestor(location::String, buildingDict::Dict{String,Building})
     return uppercase(userInput)
 end
 
-function shortestPath(startENU, endENU)
+function shortestPath(startLLA, endLLA)
     # Path to the .osm file
     niuPath = "./niuMap.osm"
 
     # Parses the osm file and creates the road network based on the map data. 
-    niuRoadNetwork = OpenStreetMapX.get_map_data(niuPath, only_intersections=false, use_cache=false)
+    niuRoadNetwork = get_map_data(niuPath, only_intersections=false, use_cache=false)
 
-    p = OpenStreetMapXPlot.plotmap(niuRoadNetwork, width=1000, height=800, km=true)
+    p = plotmap(niuRoadNetwork, width=1000, height=800, km=true)
 
-    p
+    pointA = point_to_nodes((parse(Float64, startLLA[1]), parse(Float64, startLLA[2])), niuRoadNetwork)
+    pointB = point_to_nodes((parse(Float64, endLLA[1]), parse(Float64, endLLA[2])), niuRoadNetwork)
+
+    shortestRoute = shortest_route(niuRoadNetwork, pointA, pointB)[1]
+    addroute!(p, niuRoadNetwork, shortestRoute; route_color="red")
+
+    return p
 end
 
 """
@@ -109,9 +115,10 @@ function menu(buildingDict::Dict{String,Building})
             startLLA = (buildingDict[startingLocation].lat, buildingDict[startingLocation].lon)
             endLLA = (buildingDict[endingLocation].lat, buildingDict[endingLocation].lon)
 
-            enuTuple = convertLLAtoENU(startLLA, endLLA)
+            #enuTuple = convertLLAtoENU(startLLA, endLLA)
 
-            shortestPath(enuTuple[1], enuTuple[2]) 
+            p = shortestPath(startLLA, endLLA) 
+            return p
         else
             startingLocation = ""
             endingLocation = ""

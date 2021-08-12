@@ -2,7 +2,7 @@
     Developer: Gregory Gomez
     Project: NIU Map
 
-    Objective: To visualize the optimal paths on the NIU campus. Uses the Plots.gr() backend to achive this.  
+    Objective: To visualize the optimal paths on the NIU campus. Uses the Plots.gr() backend to achieve this.  
 
 """
 # using Base: Float16
@@ -16,9 +16,9 @@ include("Menu.jl")
 niuPath = "./niuMap.osm"
 
 # Parses the osm file and creates the road network based on the map data. 
-niuRoadNetwork = OpenStreetMapX.get_map_data(niuPath, only_intersections=false, use_cache=false)
+#niuRoadNetwork = OpenStreetMapX.get_map_data(niuPath, only_intersections=false, use_cache=false)
 
-p = OpenStreetMapXPlot.plotmap(niuRoadNetwork, width=1000, height=800, km=true)
+#p = OpenStreetMapXPlot.plotmap(niuRoadNetwork, width=1000, height=800, km=true)
 
 csBuildingLLA = LLA(41.9435221, -88.7720755)
 
@@ -37,7 +37,8 @@ buildingDict = Dict("1" => Building())
 createNodeDict(nodeDict, niuPath)
 createBuildingDict(buildingDict, nodeDict, niuPath)
 
-menu(buildingDict)
+p = menu(buildingDict)
+p
 
 
 # location = "Fdsafdsafds"
