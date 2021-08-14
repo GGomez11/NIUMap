@@ -16,7 +16,7 @@ include("Menu.jl")
 niuPath = "./niuMap.osm"
 
 # Parses the osm file and creates the road network based on the map data. 
-#niuRoadNetwork = OpenStreetMapX.get_map_data(niuPath, only_intersections=false, use_cache=false)
+niuRoadNetwork = OpenStreetMapX.get_map_data(niuPath, use_cache=false)
 
 #p = OpenStreetMapXPlot.plotmap(niuRoadNetwork, width=1000, height=800, km=true)
 
@@ -37,9 +37,12 @@ buildingDict = Dict("1" => Building())
 createNodeDict(nodeDict, niuPath)
 createBuildingDict(buildingDict, nodeDict, niuPath)
 
-p = menu(buildingDict)
+
+p = OpenStreetMapXPlot.plotmap(niuRoadNetwork, width=1000, height=800)
+
+menu(buildingDict, p, niuRoadNetwork)
+
 p
-
-
 # location = "Fdsafdsafds"
+
 

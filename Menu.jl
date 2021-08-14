@@ -1,9 +1,10 @@
 """
-Function that provides the user with recommended locations. 
-Suggests locations that start with the same letter as the user input.
-Eventually I want to implement a Neural Network for suggestions. 
+Function that prints locations that beging with the same letter as the 
+user inputted location. Eventually I want to implement a Neural Network for suggestions. 
+
+Returns Y or N based on if the user wants to try to submit a location again. 
 """
-function suggestor(location::String, buildingDict::Dict{String,Building})
+function locationSuggestor(location::String, buildingDict::Dict{String,Building})
     userInput = ""
     println("The location ", location, " does not exist")
     println("Here are some recommendations")
@@ -31,22 +32,21 @@ function suggestor(location::String, buildingDict::Dict{String,Building})
     return uppercase(userInput)
 end
 
-function shortestPath(startLLA, endLLA)
+"""
+Adds a route to the map. Gets nodes closes to the lattitude and longitude passed in. 
+"""
+function plotShortestRoute(startLLA::Tuple{String, String}, endLLA::Tuple{String, String}, p::Plots.Plot{Plots.GRBackend}, n)
     # Path to the .osm file
     niuPath = "./niuMap.osm"
 
     # Parses the osm file and creates the road network based on the map data. 
-    niuRoadNetwork = get_map_data(niuPath, only_intersections=false, use_cache=false)
-
-    p = plotmap(niuRoadNetwork, width=1000, height=800, km=true)
+    #niuRoadNetwork = get_map_data(niuPath, only_intersections=false, use_cache=false)
 
     pointA = point_to_nodes((parse(Float64, startLLA[1]), parse(Float64, startLLA[2])), niuRoadNetwork)
     pointB = point_to_nodes((parse(Float64, endLLA[1]), parse(Float64, endLLA[2])), niuRoadNetwork)
 
     shortestRoute = shortest_route(niuRoadNetwork, pointA, pointB)[1]
-    addroute!(p, niuRoadNetwork, shortestRoute; route_color="red")
-
-    return p
+    addroute!(p, n, shortestRoute; route_color="red")
 end
 
 """
@@ -68,7 +68,7 @@ end
 """
 Menu function 
 """
-function menu(buildingDict::Dict{String,Building})
+function menu(buildingDict::Dict{String,Building}, p::Plots.Plot{Plots.GRBackend}, n)
     println("Select an option")
     println("1) Shortest Path")
     println("2) Agent Simulation")
@@ -89,7 +89,7 @@ function menu(buildingDict::Dict{String,Building})
     # Shortest path simulation
     if (userInput == "1")
         println("1) Random locations")
-        println("2) Pick locations")
+        println("2) Pick locations\n")
         userInput = readline()
         
         # Input validation. Loops while user does not input a 1, 2 or Q
@@ -116,9 +116,10 @@ function menu(buildingDict::Dict{String,Building})
             endLLA = (buildingDict[endingLocation].lat, buildingDict[endingLocation].lon)
 
             #enuTuple = convertLLAtoENU(startLLA, endLLA)
-
-            p = shortestPath(startLLA, endLLA) 
-            return p
+            println(startLLA)
+            println(endLLA)
+            plotShortestRoute(startLLA, endLLA, p, n) 
+            
         else
             startingLocation = ""
             endingLocation = ""
@@ -133,7 +134,7 @@ function menu(buildingDict::Dict{String,Building})
                     buildingDict[startingLocation]
                     break
                 catch e
-                    if (suggestor(startingLocation, buildingDict) == "N")
+                    if (locationSuggestor(startingLocation, buildingDict) == "N")
                         return
                     end
                     continue
@@ -150,7 +151,7 @@ function menu(buildingDict::Dict{String,Building})
                     buildingDict[endingLocation]
                     break
                 catch e
-                    if (suggestor(startingLocation, buildingDict) == "N")
+                    if (locationSuggestor(endingLocation, buildingDict) == "N")
                         return
                     end
                     continue
@@ -161,12 +162,12 @@ function menu(buildingDict::Dict{String,Building})
             startLLA = (buildingDict[startingLocation].lat, buildingDict[startingLocation].lon)
             endLLA = (buildingDict[endingLocation].lat, buildingDict[endingLocation].lon)
 
-            println("Starting location:", startingLocation)
-            println("Ending location:", endingLocation)
+            #enuTuple = convertLLAtoENU(startLLA, endLLA)
 
-            enuTuple = convertLLAtoENU(startLLA, endLLA)
-
-            shortestPath(enuTuple[1], enuTuple[2])
+            println(startLLA)
+            
+            plotShortestRoute(startLLA, endLLA, p, n)
+            println(endLLA)
         end
     elseif (userInput == "2")
         println("Agent simulation")
