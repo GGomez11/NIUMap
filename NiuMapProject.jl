@@ -9,6 +9,7 @@
 using OpenStreetMapXPlot
 using OpenStreetMapX
 using Plots
+using LightGraphs
 include("NodeObject.jl")
 include("Menu.jl")
 
@@ -16,7 +17,7 @@ include("Menu.jl")
 niuPath = "./niuMap.osm"
 
 # Parses the osm file and creates the road network based on the map data. 
-niuRoadNetwork = OpenStreetMapX.get_map_data(niuPath, use_cache=false)
+niuRoadNetwork = OpenStreetMapX.get_map_data(niuPath, use_cache=false, trim_to_connected_graph=true)
 
 #p = OpenStreetMapXPlot.plotmap(niuRoadNetwork, width=1000, height=800, km=true)
 

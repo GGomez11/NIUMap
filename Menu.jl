@@ -46,6 +46,7 @@ function plotShortestRoute(startLLA::Tuple{String, String}, endLLA::Tuple{String
     pointB = point_to_nodes((parse(Float64, endLLA[1]), parse(Float64, endLLA[2])), niuRoadNetwork)
 
     shortestRoute = shortest_route(niuRoadNetwork, pointA, pointB)[1]
+    
     addroute!(p, n, shortestRoute; route_color="red")
 end
 
@@ -164,10 +165,8 @@ function menu(buildingDict::Dict{String,Building}, p::Plots.Plot{Plots.GRBackend
 
             #enuTuple = convertLLAtoENU(startLLA, endLLA)
 
-            println(startLLA)
-            
             plotShortestRoute(startLLA, endLLA, p, n)
-            println(endLLA)
+            
         end
     elseif (userInput == "2")
         println("Agent simulation")
