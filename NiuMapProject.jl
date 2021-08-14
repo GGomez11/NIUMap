@@ -10,8 +10,10 @@ using OpenStreetMapXPlot
 using OpenStreetMapX
 using Plots
 using LightGraphs
-include("NodeObject.jl")
+include("Node.jl")
+include("Building.jl")
 include("Menu.jl")
+
 
 # Path to the .osm file
 niuPath = "./niuMap.osm"

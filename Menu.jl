@@ -5,6 +5,7 @@ user inputted location. Eventually I want to implement a Neural Network for sugg
 Returns Y or N based on if the user wants to try to submit a location again. 
 """
 function locationSuggestor(location::String, buildingDict::Dict{String,Building})
+    locationNameArray = []
     userInput = ""
     println("The location ", location, " does not exist")
     println("Here are some recommendations")
@@ -12,8 +13,14 @@ function locationSuggestor(location::String, buildingDict::Dict{String,Building}
     # Print locations that start with the same letter as the user input
     for (key, value) in buildingDict
         if (uppercase(key[1]) == uppercase(location[1]))
-            println(key)
+            push!(locationNameArray, key)
         end
+    end
+
+    sort!(locationNameArray)
+
+    for i in locationNameArray
+        println(i)
     end
 
     println("Would you like to try again?")
@@ -36,12 +43,6 @@ end
 Adds a route to the map. Gets nodes closes to the lattitude and longitude passed in. 
 """
 function plotShortestRoute(startLLA::Tuple{String, String}, endLLA::Tuple{String, String}, p::Plots.Plot{Plots.GRBackend}, n)
-    # Path to the .osm file
-    niuPath = "./niuMap.osm"
-
-    # Parses the osm file and creates the road network based on the map data. 
-    #niuRoadNetwork = get_map_data(niuPath, only_intersections=false, use_cache=false)
-
     pointA = point_to_nodes((parse(Float64, startLLA[1]), parse(Float64, startLLA[2])), niuRoadNetwork)
     pointB = point_to_nodes((parse(Float64, endLLA[1]), parse(Float64, endLLA[2])), niuRoadNetwork)
 
@@ -117,8 +118,7 @@ function menu(buildingDict::Dict{String,Building}, p::Plots.Plot{Plots.GRBackend
             endLLA = (buildingDict[endingLocation].lat, buildingDict[endingLocation].lon)
 
             #enuTuple = convertLLAtoENU(startLLA, endLLA)
-            println(startLLA)
-            println(endLLA)
+            
             plotShortestRoute(startLLA, endLLA, p, n) 
             
         else
