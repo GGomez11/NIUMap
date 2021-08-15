@@ -10,9 +10,12 @@ using OpenStreetMapXPlot
 using OpenStreetMapX
 using Plots
 using LightGraphs
+using Agents
 include("Node.jl")
 include("Building.jl")
+include("Car.jl")
 include("Menu.jl")
+
 
 
 # Path to the .osm file
@@ -21,11 +24,11 @@ niuPath = "./niuMap.osm"
 # Parses the osm file and creates the road network based on the map data. 
 niuRoadNetwork = OpenStreetMapX.get_map_data(niuPath, use_cache=false, trim_to_connected_graph=true)
 
-#p = OpenStreetMapXPlot.plotmap(niuRoadNetwork, width=1000, height=800, km=true)
 
 csBuildingLLA = LLA(41.9435221, -88.7720755)
 
-
+# Creating NIU Agent Based Model
+niuModel = ABM(Car, OpenStreetMapSpace(niuPath))
 
 # csBuildingENU = convertLLAtoENU(csBuildingLLA)    
 # nearest_node(niuRoadNetwork, csBuildingENU)
