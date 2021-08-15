@@ -42,27 +42,26 @@ end
 """
 Adds a route to the map. Gets nodes closes to the lattitude and longitude passed in. 
 """
-function plotShortestRoute(startLLA::Tuple{String, String}, endLLA::Tuple{String, String}, p::Plots.Plot{Plots.GRBackend}, n)
-    pointA = point_to_nodes((parse(Float64, startLLA[1]), parse(Float64, startLLA[2])), niuRoadNetwork)
-    pointB = point_to_nodes((parse(Float64, endLLA[1]), parse(Float64, endLLA[2])), niuRoadNetwork)
+function plotShortestRoute(startLLA::Tuple{String, String}, endLLA::Tuple{String, String}, p::Plots.Plot{Plots.GRBackend}, model::ABM{<:OpenStreetMapSpace})
+    pointA = point_to_nodes((parse(Float64, startLLA[1]), parse(Float64, startLLA[2])), model.space.m)
+    pointB = point_to_nodes((parse(Float64, endLLA[1]), parse(Float64, endLLA[2])), model.space.m)
 
-    shortestRoute = shortest_route(niuRoadNetwork, pointA, pointB)[1]
-    
-    addroute!(p, n, shortestRoute; route_color="red")
+    shortestRoute = shortest_route(model.space.m, pointA, pointB)[1]
+    addroute!(p, model.space.m, shortestRoute; route_color="red")
 end
 
 """
 Converts an LLA cordinate to an ENU. Does this by converting an LLA cordinate to 
 an ECEF cordinate and then converting to an ENU cordinate with the use of. 
 
-niuRoadNetwork.bounds gives the bounds of the map in LLA cordinates.
+map.bounds gives the bounds of the map in LLA cordinates.
 """
 function convertLLAtoENU(startLLA::Tuple{String,String}, endLLA::Tuple{String,String})::Tuple{ENU,ENU}
     ecefStart = ECEF(LLA(parse(Float64, (startLLA[1])), parse(Float64, (startLLA[2]))))
-    enuStart = ENU(ecefStart, OpenStreetMapX.center(niuRoadNetwork.bounds))
+    enuStart = ENU(ecefStart, OpenStreetMapX.center(map.bounds))
 
     ecefEnd = ECEF(LLA(parse(Float64, endLLA[1]), parse(Float64, endLLA[2])))
-    enuEnd = ENU(ecefEnd, OpenStreetMapX.center(niuRoadNetwork.bounds))
+    enuEnd = ENU(ecefEnd, OpenStreetMapX.center(nmap.bounds))
     return (enuStart, enuEnd)
 end
 
@@ -70,7 +69,7 @@ end
 """
 Menu function 
 """
-function menu(buildingDict::Dict{String,Building}, p::Plots.Plot{Plots.GRBackend}, n)
+function menu(buildingDict::Dict{String,Building}, p::Plots.Plot{Plots.GRBackend},  model::ABM{<:OpenStreetMapSpace})
     println("Select an option")
     println("1) Shortest Path")
     println("2) Agent Simulation")
@@ -119,7 +118,10 @@ function menu(buildingDict::Dict{String,Building}, p::Plots.Plot{Plots.GRBackend
 
             #enuTuple = convertLLAtoENU(startLLA, endLLA)
             
-            plotShortestRoute(startLLA, endLLA, p, n) 
+            plotShortestRoute(startLLA, endLLA, p, model) 
+            initialiseCar(startLLA, endLLA, model)
+            step!(model, agent_step!, 1)
+            plotCar(model)
             
         else
             startingLocation = ""
@@ -165,8 +167,10 @@ function menu(buildingDict::Dict{String,Building}, p::Plots.Plot{Plots.GRBackend
 
             #enuTuple = convertLLAtoENU(startLLA, endLLA)
 
-            plotShortestRoute(startLLA, endLLA, p, n)
-            
+            plotShortestRoute(startLLA, endLLA, p, model)
+            initialiseCar(startLLA, endLLA, model)
+            step!(model, agent_step!, 1)
+            plotCar(model)
         end
     elseif (userInput == "2")
         println("Agent simulation")

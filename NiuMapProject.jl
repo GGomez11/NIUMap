@@ -22,12 +22,12 @@ include("Menu.jl")
 niuPath = "./niuMap.osm"
 
 # Parses the osm file and creates the road network based on the map data. 
-niuRoadNetwork = OpenStreetMapX.get_map_data(niuPath, use_cache=false, trim_to_connected_graph=true)
+#niuRoadNetwork = OpenStreetMapX.get_map_data(niuPath, use_cache=false, trim_to_connected_graph=true)
 
 
 csBuildingLLA = LLA(41.9435221, -88.7720755)
 
-# Creating NIU Agent Based Model
+# OSM space 
 niuModel = ABM(Car, OpenStreetMapSpace(niuPath))
 
 # csBuildingENU = convertLLAtoENU(csBuildingLLA)    
@@ -44,10 +44,9 @@ createNodeDict(nodeDict, niuPath)
 createBuildingDict(buildingDict, nodeDict, niuPath)
 
 
-p = OpenStreetMapXPlot.plotmap(niuRoadNetwork, width=1000, height=800)
+p = OpenStreetMapXPlot.plotmap(niuModel.space.m, width=1000, height=800)
 
-menu(buildingDict, p, niuRoadNetwork)
-
+menu(buildingDict, p, niuModel)
 p
 # location = "Fdsafdsafds"
 
