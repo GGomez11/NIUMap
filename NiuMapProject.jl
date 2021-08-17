@@ -16,43 +16,38 @@ include("Building.jl")
 include("Car.jl")
 include("Menu.jl")
 
-
-
 # Path to the .osm file
 niuPath = "./niuMap.osm"
 
-# Parses the osm file and creates the road network based on the map data. 
-#niuRoadNetwork = OpenStreetMapX.get_map_data(niuPath, use_cache=false, trim_to_connected_graph=true)
-
-
-csBuildingLLA = LLA(41.9435221, -88.7720755)
-
-# OSM space 
+# Creating Agent Base Model 
 niuModel = ABM(Car, OpenStreetMapSpace(niuPath))
 
-# csBuildingENU = convertLLAtoENU(csBuildingLLA)    
-# nearest_node(niuRoadNetwork, csBuildingENU)
-
-# Create a Dictionary that will map a node to a Node with meta data about it
-# Julia interpretes keys and values by looking at the call. 
+# Creating a Dictionary that will hold all the node elements and their 
+# latitudes and longitudes
 nodeDict = Dict("1" => Node())
 
+# Calling dictionaries 
+createNodeDict(nodeDict, niuPath)
+createBuildingDict(buildingDict, nodeDict, niuPath)
+
+# Creating a Dictionary that will map the names of buildings to
+# metadata about the building. 
 buildingDict = Dict("1" => Building())
 
 # Creating an Animation
 anim = Animation()
 
-# Calling function that will return a Dict of Node objects
-createNodeDict(nodeDict, niuPath)
-createBuildingDict(buildingDict, nodeDict, niuPath)
-
-
+# Creating initial Plot
 p = OpenStreetMapXPlot.plotmap(niuModel.space.m, width=1000, height=800)
 
+# Displaying program
 menu(buildingDict, p, niuModel)
 
+# Display end plot 
 p
+
+# Create gif 
 gif(anim, "astar.gif", fps = 30)
-# location = "Fdsafdsafds"
+
 
 
