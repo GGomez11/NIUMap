@@ -5,7 +5,7 @@ creating a data structure that contains all the older nodes and the buildings no
 the data structue will also contain the details/descriptions associated with the building nodes. 
 """
 
-# Node that contains lon lat 
+# Node structure, contains a latatitude and longitude property
 mutable struct Node
     lat::String
     lon::String

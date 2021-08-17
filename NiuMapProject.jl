@@ -15,6 +15,8 @@ include("Node.jl")
 include("Building.jl")
 include("Car.jl")
 include("Menu.jl")
+include("Plotting.jl")
+include("Suggestor.jl")
 
 # Path to the .osm file
 niuPath = "./niuMap.osm"
@@ -26,13 +28,13 @@ niuModel = ABM(Car, OpenStreetMapSpace(niuPath))
 # latitudes and longitudes
 nodeDict = Dict("1" => Node())
 
-# Calling dictionaries 
-createNodeDict(nodeDict, niuPath)
-createBuildingDict(buildingDict, nodeDict, niuPath)
-
 # Creating a Dictionary that will map the names of buildings to
 # metadata about the building. 
 buildingDict = Dict("1" => Building())
+
+# Creating dictionaries 
+createNodeDict(nodeDict, niuPath)
+createBuildingDict(buildingDict, nodeDict, niuPath)
 
 # Creating an Animation
 anim = Animation()
