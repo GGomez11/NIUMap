@@ -47,6 +47,8 @@ function plotCar(model)
     markers = :circle
     pos = [osm_map_coordinates(model[i], model) for i in ids]
 
+    global p = OpenStreetMapXPlot.plotmap(model.space.m, width=1000, height=800)
+
     scatter!(
         pos;
         markercolor = colors,
@@ -57,6 +59,8 @@ function plotCar(model)
         markerstrokecolor = :black,
         markeralpha = 0.7,
     )
+
+    
     
 end
 
@@ -90,24 +94,24 @@ end
 ac(agent) = :black
 as(agent) = 6 
 
-function plotCar(model)
-     # Get unique id of each Car
-     ids = model.scheduler(model)
-     # List of Car color
-     colors = [ac(model[i]) for i in ids] 
-     # List of Car size
-     sizes = [as(model[i]) for i in ids] # Agent size
-     markers = :circle
-     pos = [osm_map_coordinates(model[i], model) for i in ids]
+# function plotCar(model)
+#      # Get unique id of each Car
+#      ids = model.scheduler(model)
+#      # List of Car color
+#      colors = [ac(model[i]) for i in ids] 
+#      # List of Car size
+#      sizes = [as(model[i]) for i in ids] # Agent size
+#      markers = :circle
+#      pos = [osm_map_coordinates(model[i], model) for i in ids]
  
-     scatter!(
-         pos;
-         markercolor = colors,
-         markersize = sizes,
-         markershapes = markers,
-         label = "",
-         markerstrokewidth = 0.5,
-         markerstrokecolor = :black,
-         markeralpha = 0.7,
-     ) 
-end
+#      scatter!(
+#          pos;
+#          markercolor = colors,
+#          markersize = sizes,
+#          markershapes = markers,
+#          label = "",
+#          markerstrokewidth = 0.5,
+#          markerstrokecolor = :black,
+#          markeralpha = 0.7,
+#      ) 
+# end

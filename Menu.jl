@@ -120,8 +120,27 @@ function menu(buildingDict::Dict{String,Building}, p::Plots.Plot{Plots.GRBackend
             
             plotShortestRoute(startLLA, endLLA, p, model) 
             initialiseCar(startLLA, endLLA, model)
-            step!(model, agent_step!, 1)
-            plotCar(model)
+            
+            for in in 0:60
+                p
+                frame(anim)
+            end
+
+            finishNode = point_to_nodes((parse(Float64, endLLA[1]), parse(Float64, endLLA[2])), model.space.m)
+            
+            for i in 0:210
+                step!(model, agent_step!, 1)
+                plotCar(model)
+                frame(anim)
+
+
+                longitudeError = osm_latlon(model.agents[1], model)[1] - latlon(model.space.m, model.space.m.v[finishNode])[1] 
+                lattitudeError = osm_latlon(model.agents[1], model)[2] - latlon(model.space.m, model.space.m.v[finishNode])[2]
+                
+                if abs(longitudeError) < 1.0e-13 && abs(lattitudeError) < 1.0e-13
+                    break 
+                end
+            end
             
         else
             startingLocation = ""
@@ -169,8 +188,22 @@ function menu(buildingDict::Dict{String,Building}, p::Plots.Plot{Plots.GRBackend
 
             plotShortestRoute(startLLA, endLLA, p, model)
             initialiseCar(startLLA, endLLA, model)
-            step!(model, agent_step!, 1)
-            plotCar(model)
+            
+            finishNode = point_to_nodes((parse(Float64, endLLA[1]), parse(Float64, endLLA[2])), model.space.m)
+
+            for i in 0:210
+                step!(model, agent_step!, 1)
+                plotCar(model)
+                frame(anim)
+
+
+                longitudeError = osm_latlon(model.agents[1],model)[1] - latlon(model.space.m, model.space.m.v[finishNode])[1] 
+                lattitudeError = osm_latlon(model.agents[1],model)[2] - latlon(model.space.m, model.space.m.v[finishNode])[2]
+                
+                if abs(longitudeError) < 1.0e-13 && abs(lattitudeError) < 1.0e-13
+                    break 
+                end
+            end
         end
     elseif (userInput == "2")
         println("Agent simulation")

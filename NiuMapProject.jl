@@ -39,6 +39,9 @@ nodeDict = Dict("1" => Node())
 
 buildingDict = Dict("1" => Building())
 
+# Creating an Animation
+anim = Animation()
+
 # Calling function that will return a Dict of Node objects
 createNodeDict(nodeDict, niuPath)
 createBuildingDict(buildingDict, nodeDict, niuPath)
@@ -47,7 +50,9 @@ createBuildingDict(buildingDict, nodeDict, niuPath)
 p = OpenStreetMapXPlot.plotmap(niuModel.space.m, width=1000, height=800)
 
 menu(buildingDict, p, niuModel)
+
 p
+gif(anim, "astar.gif", fps = 30)
 # location = "Fdsafdsafds"
 
 
