@@ -7,3 +7,5 @@ Personal project that visualized shortest paths on the NIU compass. Program also
 using Pkg; Pkg.add("OpenStreetMapXPlot", "OpenStreetMapX", "Plots")
 ```
 
+## Gif Created
+![Alt Text](https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif)
