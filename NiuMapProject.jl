@@ -49,7 +49,7 @@ menu(buildingDict, p, niuModel)
 p
 
 # Create gif 
-gif(anim, "astar.gif", fps = 30)
+gif(anim, "NIUShortestPath.gif", fps = 30)
 
 
 
