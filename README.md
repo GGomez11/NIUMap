@@ -8,4 +8,4 @@ using Pkg; Pkg.add("OpenStreetMapXPlot", "OpenStreetMapX", "Plots")
 ```
 
 ## Gif Created
-![Shortest Path GIF](NiuShortestPath.gif)
+![Shortest Path GIF](NIUShortestPath.gif)
