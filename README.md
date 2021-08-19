@@ -1,6 +1,8 @@
 # NiuMap
 
-Personal project that visualized shortest paths on the NIU compass. Program creates a gif with an agent traversing the path.
+* Program that visualizes a shortest path on the Northern Illinois campus
+* Program creates a gif with an agent traversing the path. 
+* Users are allowed to pick locations or random locations found on the campus. 
 
 ## Package Installation
 ```julia
